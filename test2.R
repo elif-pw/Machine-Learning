@@ -1,25 +1,3 @@
-func <- function(Ai, x) {
-  ci<-Ai[1]
-  ciii<-Ai[length(Ai)]
-  cii<-median(Ai)
-  ifelse(x>=ci & x<cii, (x-ci)/(cii-ci), ifelse(x>=cii & x<=ciii, (ciii-x)/(ciii-cii), 0))
-}
-
-funcHelper <- function(A) {
-  len <- length(A)
-  tmpX <- seq(A[[1]][1], A[[length(A)]][length(A[[length(A)]])], 0.1)
-  for (i in 1:len){
-    xd <- A[[i]]
-    x <- seq(xd[1], xd[length(xd)], 0.1)
-    if (i=0){
-      curve(func(xd, x), from=xd[1], to=xd[length(xd)], type="l")
-    } 
-    else {
-      curve(func(xd, x), from=xd[1], to=xd[length(xd)], type="l", add=TRUE)
-    }
-  }
-}
-
 data <- read.csv2("https://raw.githubusercontent.com/elif-pw/Machine-Learning/master/pwt91.csv?token=AKUJXQBVWFK4PU2UQH2S2GC6QM5RO")
 x<-data$year
 y<-data$pl_k
@@ -44,4 +22,20 @@ for (i in 2:length(x)) {
 }
 A[[tmpA]]<-Ai
 
+
+func <- function(Ai, x) {
+  ci<-Ai[1]
+  ciii<-Ai[length(Ai)]
+  cii<-median(Ai)
+  ifelse(x>=ci & x<cii, (x-ci)/(cii-ci), ifelse(x>=cii & x<=ciii, (ciii-x)/(ciii-cii), 0))
+}
+plotPartitions <- function(A) {
+  plot(NULL, xlim=c(0,length(x)), ylim=c(0,1.5), ylab="y label", xlab="x lablel")
+  len <- length(A)
+  for (i in 1:len){
+    xd <- A[[i]]
+    x <- seq(xd[1], xd[length(xd)], 0.1)
+    curve(func(xd, x), from=xd[1], to=xd[length(xd)], type="l", add=TRUE)
+  }
+}
 
