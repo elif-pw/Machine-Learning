@@ -20,18 +20,29 @@ func <- function(Ai, x) {
   ifelse(x>=ci & x<cii, (x-ci)/(cii-ci), ifelse(x>=cii & x<=ciii, (ciii-x)/(ciii-cii), 0))
 }
 
-plotPartitions <- function(A) {
+plotPartitions <- function(A, D) {
   plot(NULL, xlim=c(0,length(x)), ylim=c(0,1.5), ylab="y label", xlab="x lablel")
   len <- length(A)
   for (i in 1:len){
     xd <- A[[i]]
     x <- seq(xd[1], xd[length(xd)], 0.1)
-    curve(func(xd, x), from=xd[1], to=xd[length(xd)], type="l", add=TRUE)
+    if(!D[i]) {
+      curve(func(xd, x), from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
+      polygon(c(xd[1], xd[2], xd[3]), c(func(xd, x)[1], func(xd, x)[func(xd, x)==1], func(xd, x)[length(func(xd, x))]), col="yellow", lty=3)
+    } else {
+      curve(func(xd, x), from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
+    }
   }
+}
+
+identity_function <- function(x) {
+  
 }
 
 #beta 0
 get_beta0 <- function(A, y) {
+  B0<-vector()
+  sum1 <- 0
   for (i in 1:length(A)){
     Ai <- A[[i]]
     avg <- 0
@@ -53,7 +64,9 @@ get_beta0 <- function(A, y) {
 
 #beta 1
 get_beta1 <- function(A, y) {
+  B1<-vector()
   for (i in 1:length(A)){
+    sum1<-0
     Ai <- A[[i]]
     avg <- 0
     x2<-seq(Ai[1], Ai[length(Ai)], 0.000001)
