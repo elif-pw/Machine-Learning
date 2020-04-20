@@ -48,6 +48,9 @@ get_beta0 <- function(A, y) {
     avg <- 0
     x2<-seq(Ai[1], Ai[length(Ai)], 1)
     for (j in x2[1]:x2[length(x2)]){
+      if(j>length(y)) {
+        break;
+      }
       #print(j)
       #print(y[j])
       if (j==0){
@@ -72,6 +75,9 @@ get_beta1 <- function(A, y) {
     x2<-seq(Ai[1], Ai[length(Ai)], 0.000001)
     for (j in x2[1]:x2[length(x2)]){
       #print(j)
+      if(j>length(y)) {
+        break;
+      }
       if (j==0){
         next;
       }
