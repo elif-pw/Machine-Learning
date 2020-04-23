@@ -1,3 +1,5 @@
+
+
 #Partitions
 uniformPartitioning<-function(h,xd){
   len<-length(xd)
@@ -20,8 +22,8 @@ func <- function(Ai, x) {
   ifelse(x>=ci & x<cii, (x-ci)/(cii-ci), ifelse(x>=cii & x<=ciii, (ciii-x)/(ciii-cii), 0))
 }
 
-plotPartitions <- function(A, D) {
-  plot(NULL, xlim=c(0,length(x)), ylim=c(0,1.5), ylab="y label", xlab="x lablel")
+plotPartitions <- function(A, D, y) {
+  plot(NULL, xlim=c(0,length(x)), ylim=c(min(y)*100-2,max(y)*100+2), ylab="y label", xlab="x lablel")
   len <- length(A)
   for (i in 1:len){
     xd <- A[[i]]
@@ -104,3 +106,18 @@ get_F <- function(A, B0, B1) {
   F<-fi
   return(F)
 }
+
+#plot breaks
+plot_breaks<-function(x,y,h){
+  A<-uniformPartitioning(h, x)
+  B0 <- get_beta0(A, y)
+  B1 <- get_beta1(A, y)
+  Fxd <- get_F(A, B0, B1)
+  tmp<- mean(B1)+sd(B1)
+  tmp2<- mean(B1)-sd(B1)
+  the_best_range_ever <- tmp2 <= B1 & B1 <= tmp
+  plotPartitions(A, the_best_range_ever, y)
+  lines(Fxd*100, col="green")
+  lines(y*100, col="red")
+}
+
