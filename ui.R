@@ -1,23 +1,16 @@
+names<-colnames(read.csv2("data_all_4.csv"))
+
 shinyUI(
   pageWithSidebar(
     headerPanel("Economic Growth Structural Break Detection App"),
-    
     sidebarPanel(
-      selectInput("Country","Select",
-                  choices = c("Australia", "Côte d'Ivoire","France","Germany","Iceland", "Iran","Spain")),
-
-      sliderInput("Fuzzy Partition Horizon","Select",
-                  min=2, max=10,value=6, step=1)
-
+      selectInput("countryInput","Select country",
+                  choices = names[names!="year"]),
+      sliderInput("horizonInput","Fuzzy Partition Horizon",
+                  min=3, max=10,value=6, step=1)
     ),
     mainPanel(
-      
       plotOutput("Plot")
-      
     )
-
-    
   )
-  
-  
 )
