@@ -49,15 +49,14 @@ plotPartitions <- function(A, D, y, xdd, maxVal, minVal) {
     xd <- A[[i]]
     x <- seq(xd[1], xd[length(xd)], 0.1)
     if(!D[i]) {
-      curve(func(xd, x)*scale, from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
+      #curve(func(xd, x)*scale, from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
       polygon(c(xd[1], xd[2], xd[3]), c(func(xd, x)[1], func(xd, x)[func(xd, x)==1]*scale, func(xd, x)[length(func(xd, x))]), col="yellow", lty=3)
     } else {
-      curve(func(xd, x)*scale, from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
+      polygon(c(xd[1], xd[2], xd[3]), c(func(xd, x)[1], func(xd, x)[func(xd, x)==1]*scale, func(xd, x)[length(func(xd, x))]), lty=3)
+      #curve(func(xd, x)*scale, from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
     }
   }
-  xticks<-seq(1,length(xdd))
-  #axis(1, at=x, labels = FALSE)
-  axis(1, at=xticks, labels=xdd, las=2)
+  axis(1, at=seq(1,length(xdd)), labels=xdd, las=2)
 }
 
 #beta 0
@@ -112,12 +111,15 @@ get_beta1 <- function(A, y) {
 }
 
 #F
-get_F <- function(A, B0, B1) {
+get_F <- function(A, B0, B1, y) {
   F <- vector()
   tmpF <- 1
   fi<-vector()
   for (i in 1:length(A)){
     for (j in seq(A[[i]][1], A[[i]][3], 0.001)){
+      if(j>length(y)) {
+        break;
+      }
       fi[j]<-B0[i]+B1[i]*(j-A[[i]][2])
     }
     #tmpF = tmpF + 1
@@ -131,12 +133,14 @@ plot_breaks<-function(x,y,h){
   A<-uniformPartitioning(h, x)
   B0 <- get_beta0(A, y)
   B1 <- get_beta1(A, y)
-  Fxd <- get_F(A, B0, B1)
+  Fxd <- get_F(A, B0, B1,y)
   tmp<- mean(B1)+sd(B1)
   tmp2<- mean(B1)-sd(B1)
   the_best_range_ever <- tmp2 <= B1 & B1 <= tmp
   maxVal<-max(Fxd,y,na.rm=TRUE)
   minVal<-min(Fxd,y,na.rm=TRUE)
+  print(length(Fxd))
+  print(length(y))
   plotPartitions(A, the_best_range_ever, y, x, maxVal, minVal)
   lines(Fxd*100, col="green")
   lines(y*100, col="red")
