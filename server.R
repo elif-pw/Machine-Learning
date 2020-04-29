@@ -172,6 +172,7 @@ plot_breaks<-function(x,y,h){
   break_years<-plotPartitions(A, satisfactoryB1, y, x, maxVal, minVal)
   lines(Fxd*100, col="green")
   lines(y*100, col="red")
+  legend("bottomright", legend=c("Approximation", "Data"), col=c("green", "red"), lty=1, cex=0.8)
   right_context<-abs(sd(y)/2/h)
   right_context_break_years_B1values<-list("right_context"=right_context,"years"=break_years, "B1_values"=B1_breakvalues)
   return(right_context_break_years_B1values)
