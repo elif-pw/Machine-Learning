@@ -2,6 +2,7 @@ data<-read.csv2("data_all_4.csv")
 x<-data$year
 
 shinyServer(
+<<<<<<< HEAD
   function(input, output, session){
     
     
@@ -36,6 +37,44 @@ shinyServer(
       })
     })  
   }
+=======
+function(input, output, session){
+  
+  
+  output$Plot<-renderPlot({
+    country<-input$countryInput
+    chosenh<-input$horizonInput
+    #print(country)
+    y<-data[match(country, colnames(data))][[1]]
+    y<-y[!is.na(y)]
+    xdStart<-length(x)-length(y)
+    xdEnd<-length(x)
+    x<-x[xdStart:xdEnd]
+    break_years_B1values<-plot_breaks(x,y, chosenh)
+ 
+    
+    
+   output$RightContextStr<-renderText({
+     paste("Context right boundary absolute value: ")
+   })  
+   output$RightContextVal<-renderText({
+     break_years_B1values$right_context
+   })
+   output$YearStr<-renderText({
+     paste("Structural Breaks happened in:")
+   })
+   output$Years<-renderText(sep = ", ",{
+     break_years_B1values$years
+   })
+   output$B1Str<-renderText({
+     paste("Break points B1 values")
+   })
+   output$B1Values<-renderText(sep = ", ",{
+     break_years_B1values$B1_values
+   })
+  })  
+}
+>>>>>>> 32e2fa396dc913be2b5e1f98fa5c9f1b997ffb51
 )
 
 #Partitions
@@ -158,9 +197,16 @@ plot_breaks<-function(x,y,h){
   A<-uniformPartitioning(h, x)
   B0 <- get_beta0(A, y)
   B1 <- get_beta1(A, y)
+<<<<<<< HEAD
   Fxd <- get_F(A, B0, B1, y)
   right_context <- abs(sd(y)/2/h)
   satisfactoryB1 <- B1>right_context
+=======
+  Fxd <- get_F(A, B0, B1,y)
+  tmp<- mean(B1)+sd(B1)
+  tmp2<- mean(B1)-sd(B1)
+  satisfactoryB1 <- tmp2 <= B1 & B1 <= tmp
+>>>>>>> 32e2fa396dc913be2b5e1f98fa5c9f1b997ffb51
   maxVal<-max(Fxd,y,na.rm=TRUE)
   minVal<-min(Fxd,y,na.rm=TRUE)
   B1_breakvalues<-B1[satisfactoryB1==FALSE]
@@ -173,4 +219,10 @@ plot_breaks<-function(x,y,h){
   right_context<-abs(sd(y)/2/h)
   right_context_break_years_B1values<-list("right_context"=right_context,"years"=break_years, "B1_values"=B1_breakvalues)
   return(right_context_break_years_B1values)
+<<<<<<< HEAD
 }
+=======
+}
+
+
+>>>>>>> 32e2fa396dc913be2b5e1f98fa5c9f1b997ffb51
