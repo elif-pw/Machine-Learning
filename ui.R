@@ -7,7 +7,7 @@ shinyUI(
       selectInput("countryInput","Select country",
                   choices = names[names!="year"]),
       sliderInput("horizonInput","Fuzzy Partition Horizon",
-                  min=3, max=10,value=6, step=1)
+                  min=2, max=10,value=6, step=1)
     ),
     mainPanel(
       plotOutput("Plot"),

@@ -38,12 +38,13 @@ shinyServer(
   }
 )
 
+
 #Partitions
 uniformPartitioning<-function(h,xd){
   len<-length(xd)
-  s1 <- seq(0, len-h, by = h/2)
-  s2<-seq(h/2, len-h/2, by= h/2)
-  s3<-seq(h, len, by = h/2)
+  s1 <- seq(0, len-2*h, by = h)
+  s2<-seq(h, len-h, by= h)
+  s3<-seq(2*h, len, by = h)
   A<-Map(c, s1,s2,s3)
   if(len%%h!=0) {
     last_element_of_A <- A[[length(A)]]
@@ -160,12 +161,10 @@ plot_breaks<-function(x,y,h){
   B1 <- get_beta1(A, y)
   Fxd <- get_F(A, B0, B1, y)
   right_context <- abs(sd(y)/2/h)
-  satisfactoryB1 <- B1>right_context
+  satisfactoryB1 <- B1>right_context |  B1<(-right_context)
   maxVal<-max(Fxd,y,na.rm=TRUE)
   minVal<-min(Fxd,y,na.rm=TRUE)
   B1_breakvalues<-B1[satisfactoryB1==TRUE]
-  # print(length(Fxd))
-  # print(length(y))
   break_years<-plotPartitions(A, satisfactoryB1, y, x, maxVal, minVal)
   lines(Fxd*100, col="green")
   lines(y*100, col="red")
