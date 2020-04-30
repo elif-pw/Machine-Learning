@@ -69,7 +69,7 @@ plotPartitions <- function(A, D, y, xdd, maxVal, minVal) {
   for (i in 1:len){
     xd <- A[[i]]
     x <- seq(xd[1], xd[length(xd)], 0.1)
-    if(!D[i]) {
+    if(D[i]) {
       #curve(func(xd, x)*scale, from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
       polygon(c(xd[1], xd[2], xd[3]), c(func(xd, x)[1], func(xd, x)[func(xd, x)==1]*scale, func(xd, x)[length(func(xd, x))]), col="yellow", lty=3)
       structural_break_years[counter_sb]<-xdd[xd[2]]
@@ -163,7 +163,7 @@ plot_breaks<-function(x,y,h){
   satisfactoryB1 <- B1>right_context
   maxVal<-max(Fxd,y,na.rm=TRUE)
   minVal<-min(Fxd,y,na.rm=TRUE)
-  B1_breakvalues<-B1[satisfactoryB1==FALSE]
+  B1_breakvalues<-B1[satisfactoryB1==TRUE]
   # print(length(Fxd))
   # print(length(y))
   break_years<-plotPartitions(A, satisfactoryB1, y, x, maxVal, minVal)
