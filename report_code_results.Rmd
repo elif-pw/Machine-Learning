@@ -130,9 +130,9 @@ Once we have calculated all of those subparts, we use them to
 The process of doing that is rather simple, we use threshold based on standard deviation of input data (discussed in **algorithms** section), namely:
 ```{.r}
 right_context <- abs(sd(y)/2/h)
-satisfactoryB1 <- B1>right_context
+satisfactoryB1 <- B1 > right_context
 ```
-executing this code returns a logical array of values, where falses indicate structural breaks at given positions. We then use all of this combined in plotting.
+executing this code returns a logical array of values, where TRUE values indicate structural breaks at given positions. We then use all of this combined in plotting.  
 2. Plot our results.  
 ```{.r}
 plotPartitions(A, satisfactoryB1, y, x, maxVal, minVal)
@@ -162,16 +162,16 @@ axis(1, at=seq(1,length(x_years)), labels=x_years, las=2)
 \pagebreak
 ## Results
 The results and their quality very heavily depend on chosen data as well as the fuzzy partition horizon ($h$). We can again look at the results in 2 ways, we can focus on the approximation $F$ and at the structural breaks themselves, tho they are sort of inseparable as one depends on the other.  
-We can take a look at few examples to better illustrate this, if we take Czech Republic into consideration, we can see that the data has a few fairly big jumps, which we suspect could be structural breaks. When using large fuzzy partition horizon, say 10, we get this graph:
+We can take a look at few examples to better illustrate this, if we take Czech Republic into consideration, we can see that the data has a few fairly big jumps, which we suspect could be structural breaks. When using large fuzzy partition horizon, say 10, we get this graph:  
 ![czech_republic;h=10](czech_republic_10.PNG)
-Where we can immiedietly tell that even though the approximation doesn't look too exact, the detected structural breaks are promising, we got 2004, 2009, which is something, however it looks as though some of the breaks were omitted and the one at the end looks very out of place, hence we try a different $h$, say 4.
+Where we can immiedietly tell that even though the approximation doesn't look too exact, the detected structural breaks are promising, we got 1994, 1999 and 2014, which is better than nothing, however it looks as though some of the breaks were omitted and the one at the end looks very out of place, hence we try a different $h$, say 4.  
 ![czech_republic;h=4](czech_republic_4.PNG)
-Structural breaks detected here were 1995, 2001, 2005, 2007, 2011, 2015. Not only we got more of them, they also look accurate and the approximation function looks much closer to the plotted data itself.  
-Another example could be that of Azerbaijan, when using $h=9$, we get 2007, 2011, 2016, breaks only focused in the end of the data
+Structural breaks detected here were 1991, 1993, 1997, 1999, 2003, 2009, 2013. Not only we got more of them, they also look accurate and the approximation function looks much closer to the plotted data itself.  
+Another example could be that of Azerbaijan, when using $h=9$, we get 1993, 1998, 2002, breaks only focused in the end of the data  
 ![azerbaijan;h=9](azerbaijan_9.PNG)
-But when using something smaller, like $h=5$, we get more of them (1991, 1999, 2001, 2006, 2009, 2014) and they appear to be more accurate again, same goes for the approximation function.
+But when using something smaller, like $h=5$, we get more of them (1994, 1996, 2004, 2011, 2016) and they appear to be more accurate again, same goes for the approximation function.  
 ![azerbaijan;h=5](azerbaijan_5.PNG)
-Looking at those examples we can say that the results tend to be hit or miss, depending on chose fuzzy partition horizon, one of the choise would be such that
+Looking at those examples we can say that the results tend to be hit or miss, depending on fuzzy partition horizon choice, one of the better choices would be such that
 $h | length(x)$, but frankly, the best way to find accurate $h$ is to use trail and error method.
 
 \pagebreak  
