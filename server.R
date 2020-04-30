@@ -2,21 +2,40 @@ data<-read.csv2("data_all_4.csv")
 x<-data$year
 
 shinyServer(
-function(input, output, session){
-  
-  output$Plot<-renderPlot({
-    country<-input$countryInput
-    chosenh<-input$horizonInput
-    #print(country)
-    y<-data[match(country, colnames(data))][[1]]
-    y<-y[!is.na(y)]
-    xdStart<-length(x)-length(y)
-    xdEnd<-length(x)
-    x<-x[xdStart:xdEnd]
-    plot_breaks(x,y, chosenh)
+  function(input, output, session){
     
-  })
-}
+    
+    output$Plot<-renderPlot({
+      country<-input$countryInput
+      chosenh<-input$horizonInput
+      #print(country)
+      y<-data[match(country, colnames(data))][[1]]
+      y<-y[!is.na(y)]
+      xdStart<-length(x)-length(y)
+      xdEnd<-length(x)
+      x<-x[xdStart:xdEnd]
+      break_years_B1values<-plot_breaks(x,y, chosenh)
+      
+      output$RightContextStr<-renderText({
+        paste("Context right boundary absolute value: ")
+      })  
+      output$RightContextVal<-renderText({
+        break_years_B1values$right_context
+      })
+      output$YearStr<-renderText({
+        paste("Structural Breaks happened in:")
+      })
+      output$Years<-renderText(sep = ", ",{
+        break_years_B1values$years
+      })
+      output$B1Str<-renderText({
+        paste("Break points B1 values")
+      })
+      output$B1Values<-renderText(sep = ", ",{
+        break_years_B1values$B1_values
+      })
+    })  
+  }
 )
 
 #Partitions
@@ -45,18 +64,23 @@ plotPartitions <- function(A, D, y, xdd, maxVal, minVal) {
   plot(NULL, xlim=c(1,length(xdd)), ylim=c(minVal*100-1,maxVal*100+1), ylab="GDP annual growth (%)", xlab="Time (years)", xaxt="n")
   len <- length(A)
   scale<-maxVal/7.5*100
+  structural_break_years<-vector()
+  counter_sb<-1
   for (i in 1:len){
     xd <- A[[i]]
     x <- seq(xd[1], xd[length(xd)], 0.1)
     if(!D[i]) {
       #curve(func(xd, x)*scale, from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
       polygon(c(xd[1], xd[2], xd[3]), c(func(xd, x)[1], func(xd, x)[func(xd, x)==1]*scale, func(xd, x)[length(func(xd, x))]), col="yellow", lty=3)
+      structural_break_years[counter_sb]<-xdd[xd[2]]
+      counter_sb=counter_sb+1
     } else {
       polygon(c(xd[1], xd[2], xd[3]), c(func(xd, x)[1], func(xd, x)[func(xd, x)==1]*scale, func(xd, x)[length(func(xd, x))]), lty=3)
       #curve(func(xd, x)*scale, from=xd[1], to=xd[length(xd)], type="l", add=TRUE, lty=3)
     }
   }
   axis(1, at=seq(1,length(xdd)), labels=xdd, las=2)
+  return(structural_break_years)
 }
 
 #beta 0
@@ -128,22 +152,25 @@ get_F <- function(A, B0, B1, y) {
   return(F)
 }
 
+
 #plot breaks
 plot_breaks<-function(x,y,h){
   A<-uniformPartitioning(h, x)
   B0 <- get_beta0(A, y)
   B1 <- get_beta1(A, y)
-  Fxd <- get_F(A, B0, B1,y)
-  tmp<- mean(B1)+sd(B1)
-  tmp2<- mean(B1)-sd(B1)
-  the_best_range_ever <- tmp2 <= B1 & B1 <= tmp
+  Fxd <- get_F(A, B0, B1, y)
+  right_context <- abs(sd(y)/2/h)
+  satisfactoryB1 <- B1>right_context
   maxVal<-max(Fxd,y,na.rm=TRUE)
   minVal<-min(Fxd,y,na.rm=TRUE)
-  print(length(Fxd))
-  print(length(y))
-  plotPartitions(A, the_best_range_ever, y, x, maxVal, minVal)
+  B1_breakvalues<-B1[satisfactoryB1==FALSE]
+  # print(length(Fxd))
+  # print(length(y))
+  break_years<-plotPartitions(A, satisfactoryB1, y, x, maxVal, minVal)
   lines(Fxd*100, col="green")
   lines(y*100, col="red")
+  legend("bottomright", legend=c("Approximation", "Data"), col=c("green", "red"), lty=1, cex=0.8)
+  right_context<-abs(sd(y)/2/h)
+  right_context_break_years_B1values<-list("right_context"=right_context,"years"=break_years, "B1_values"=B1_breakvalues)
+  return(right_context_break_years_B1values)
 }
-
-
